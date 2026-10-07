@@ -1,3 +1,4 @@
+import os
 import torch
 from torchvision import transforms
 from PIL import Image
@@ -65,4 +66,7 @@ interface = gr.Interface(
 )
 
 if __name__ == "__main__":
-    interface.launch()
+    interface.launch(
+        server_name="0.0.0.0",
+        server_port=int(os.environ.get("PORT", 10000))
+    )
