@@ -1,19 +1,23 @@
 import os
+from pathlib import Path
+
 import torch
 from torchvision import transforms
 from PIL import Image
 import timm
 import gradio as gr
 
-# Device configuration
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Render's free service does not provide a GPU. Keeping inference on CPU also
+# avoids loading a second copy of the model if the app is run elsewhere.
+device = torch.device("cpu")
+model_path = Path(__file__).resolve().parent / "vit_skin_disease.pth"
 
 # Load the trained ViT model
 model = timm.create_model(
-    "vit_tiny_patch16_224", pretrained=True, num_classes=7
+    "vit_tiny_patch16_224", pretrained=False, num_classes=7
 )
 model.load_state_dict(
-    torch.load("vit_skin_disease.pth", map_location=device)
+    torch.load(model_path, map_location=device, weights_only=True)
 )
 model.to(device)
 model.eval()
